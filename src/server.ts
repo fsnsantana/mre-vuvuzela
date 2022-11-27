@@ -1,6 +1,9 @@
 /*!
  * Copyright (c) The Free MRE Foundation. All rights reserved.
  * Licensed under the MIT License.
+ 
+ * Copyright (c) Francisco Santana Neto. All rights reserved.
+ * Licensed under the MIT License.
  */
 
 import * as MRE from '@microsoft/mixed-reality-extension-sdk';
