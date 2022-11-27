@@ -6,15 +6,15 @@
  * Licensed under the MIT License.
  */
 
-import { Context, ParameterSet, User } from "@microsoft/mixed-reality-extension-sdk";
+import { Context, ParameterSet, User, AssetContainer, Guid, Actor, Quaternion, DegreesToRadians, Color4, Color3, AlphaMode, ColliderType, CollisionLayer } from "@microsoft/mixed-reality-extension-sdk";
 
 /**
  * The main class of this app. All the logic goes here.
  */
 export default class App {
         private assets: AssetContainer;
-        private mouths: Map<Guid, Actor>();
-        private vuvuzelas: Map<Guid, Actor>();
+        private mouths: Map<Guid, Actor>;
+        private vuvuzelas: Map<Guid, Actor>;
         constructor(private context: Context, params: ParameterSet) {
                 this.assets = new AssetContainer(this.context);
                 this.mouths = new Map<Guid, Actor>();
@@ -80,7 +80,7 @@ export default class App {
 
                 trigger.collider.onTrigger('trigger-enter', (actor: Actor) => {
                         if (actor.name != 'mouth') return;
-                        this.buzz();
+                        this.buzz(user);
                 });
         }
 
