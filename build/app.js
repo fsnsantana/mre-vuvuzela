@@ -23,10 +23,10 @@ const mixed_reality_extension_sdk_1 = require("@microsoft/mixed-reality-extensio
 class App {
     constructor(context, params) {
         this.context = context;
-        this.buzzing = false;
         this.assets = new mixed_reality_extension_sdk_1.AssetContainer(this.context);
         this.mouths = new Map();
         this.vuvuzelas = new Map();
+        this.buzzing = new Map();
         this.context.onStarted(() => this.started());
         this.context.onUserJoined((u) => this.userjoined(u));
         this.context.onUserLeft((u) => this.userleft(u));
@@ -61,7 +61,7 @@ class App {
             actor: {
                 parentId: vuvuzela.id,
                 appearance: {
-                    meshId: this.assets.createBoxMesh('box', 0.07, 0.07, 0.07).id,
+                    meshId: this.assets.createBoxMesh('box', 0.06, 0.06, 0.06).id,
                     materialId: this.assets.createMaterial('invisible', {
                         color: mixed_reality_extension_sdk_1.Color4.FromColor3(mixed_reality_extension_sdk_1.Color3.Red(), 0),
                         alphaMode: mixed_reality_extension_sdk_1.AlphaMode.Blend
@@ -90,10 +90,10 @@ class App {
         });
     }
     buzz(user) {
-        if (this.buzzing) {
+        if (this.buzzing.get(user.id)) {
             return;
         }
-        this.buzzing = true;
+        this.buzzing.set(user.id, true);
         const actor = mixed_reality_extension_sdk_1.Actor.CreateFromLibrary(this.context, {
             resourceId: 'artifact:2144568407004021116',
             actor: {
@@ -104,7 +104,7 @@ class App {
             }
         });
         setTimeout(() => {
-            this.buzzing = false;
+            this.buzzing.set(user.id, false);
             actor.destroy();
         }, 4.7 * 1000);
     }
@@ -114,7 +114,7 @@ class App {
         const mouth = mixed_reality_extension_sdk_1.Actor.Create(this.context, {
             actor: {
                 appearance: {
-                    meshId: this.assets.createBoxMesh('box', 0.07, 0.07, 0.07).id,
+                    meshId: this.assets.createBoxMesh('box', 0.04, 0.04, 0.04).id,
                     materialId: this.assets.createMaterial('invisible', {
                         color: mixed_reality_extension_sdk_1.Color4.FromColor3(mixed_reality_extension_sdk_1.Color3.Red(), 0),
                         alphaMode: mixed_reality_extension_sdk_1.AlphaMode.Blend
@@ -125,7 +125,7 @@ class App {
                         position: {
                             x: 0.00039,
                             y: -0.09840258,
-                            z: 0.1823
+                            z: 0.12
                         }
                     }
                 },

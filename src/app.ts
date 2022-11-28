@@ -56,7 +56,7 @@ export default class App {
                         actor: {
                                 parentId: vuvuzela.id,
                                 appearance: {
-                                        meshId: this.assets.createBoxMesh('box', 0.07, 0.07, 0.07).id,
+                                        meshId: this.assets.createBoxMesh('box', 0.06, 0.06, 0.06).id,
                                         materialId: this.assets.createMaterial('invisible', {
                                                 color: Color4.FromColor3(Color3.Red(), 0),
                                                 alphaMode: AlphaMode.Blend
@@ -111,7 +111,7 @@ export default class App {
                 const mouth = Actor.Create(this.context, {
                         actor: {
                                 appearance: {
-                                        meshId: this.assets.createBoxMesh('box', 0.07, 0.07, 0.07).id,
+                                        meshId: this.assets.createBoxMesh('box', 0.04, 0.04, 0.04).id,
                                         materialId: this.assets.createMaterial('invisible', {
                                                 color: Color4.FromColor3(Color3.Red(), 0),
                                                 alphaMode: AlphaMode.Blend
@@ -122,7 +122,7 @@ export default class App {
                                                 position: {
                                                         x: 0.00039,
                                                         y: -0.09840258,
-                                                        z: 0.1823
+                                                        z: 0.12
                                                 }
                                         }
                                 },
