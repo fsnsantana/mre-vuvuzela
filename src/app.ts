@@ -15,11 +15,12 @@ export default class App {
         private assets: AssetContainer;
         private mouths: Map<Guid, Actor>;
         private vuvuzelas: Map<Guid, Actor>;
-	private buzzing: boolean = false;
+	private buzzing: Map<Guid, Boolean>;
         constructor(private context: Context, params: ParameterSet) {
                 this.assets = new AssetContainer(this.context);
                 this.mouths = new Map<Guid, Actor>();
                 this.vuvuzelas = new Map<Guid, Actor>();
+                this.buzzing = new Map<Guid, Boolean>();
                 this.context.onStarted(() => this.started());
                 this.context.onUserJoined((u: User) => this.userjoined(u));
                 this.context.onUserLeft((u: User) => this.userleft(u));
@@ -87,8 +88,8 @@ export default class App {
         }
 
         private buzz(user: User){
-		if ( this.buzzing ) { return; }
-		this.buzzing = true;
+		if ( this.buzzing.get(user.id) ) { return; }
+		this.buzzing.set(user.id,true);
                 const actor = Actor.CreateFromLibrary(this.context, {
                         resourceId: 'artifact:2144568407004021116',
                         actor: {
@@ -100,7 +101,7 @@ export default class App {
                 });
 
                 setTimeout(()=>{
-			this.buzzing = false;
+			this.buzzing.set(user.id,false);
                         actor.destroy();
                 }, 4.7*1000);
         }
