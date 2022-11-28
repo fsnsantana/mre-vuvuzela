@@ -15,6 +15,7 @@ export default class App {
         private assets: AssetContainer;
         private mouths: Map<Guid, Actor>;
         private vuvuzelas: Map<Guid, Actor>;
+	private buzzing: boolean = false;
         constructor(private context: Context, params: ParameterSet) {
                 this.assets = new AssetContainer(this.context);
                 this.mouths = new Map<Guid, Actor>();
@@ -38,8 +39,9 @@ export default class App {
                         actor: {
                                 transform: {
                                         local: {
-                                                position: {x: 0, y: 0.2, z: 0},
-                                                rotation: Quaternion.FromEulerAngles(1*DegreesToRadians,0,0)
+                                                position: {x: -0.3, y: 0, z: 0.08},
+                                                rotation: Quaternion.FromEulerAngles(-90*DegreesToRadians,0,-90*DegreesToRadians),
+						scale: { x: 0.75, y: 0.75, z: 0.75 }
                                         }
                                 },
                                 attachment: {
@@ -53,15 +55,15 @@ export default class App {
                         actor: {
                                 parentId: vuvuzela.id,
                                 appearance: {
-                                        meshId: this.assets.createBoxMesh('box', 0.1, 0.1, 0.1).id,
+                                        meshId: this.assets.createBoxMesh('box', 0.07, 0.07, 0.07).id,
                                         materialId: this.assets.createMaterial('invisible', {
-                                                color: Color4.FromColor3(Color3.Red(), 0.1),
+                                                color: Color4.FromColor3(Color3.Red(), 0),
                                                 alphaMode: AlphaMode.Blend
                                         }).id
                                 },
                                 transform: {
                                         local: {
-                                                position: {x: 0, y: 0.2, z: 0}
+                                                position: {x: 0, y: 0.6, z: 0}
                                         }
                                 },
                                 collider: {
@@ -79,14 +81,16 @@ export default class App {
                 });
 
                 trigger.collider.onTrigger('trigger-enter', (actor: Actor) => {
-                        if (actor.name != 'mouth') return;
+                        /*if (actor.name != 'mouth') return;*/
                         this.buzz(user);
                 });
         }
 
         private buzz(user: User){
+		if ( this.buzzing ) { return; }
+		this.buzzing = true;
                 const actor = Actor.CreateFromLibrary(this.context, {
-                        resourceId: 'artifact:2144492187432255527',
+                        resourceId: 'artifact:2144568407004021116',
                         actor: {
                                 attachment: {
                                         userId: user.id,
@@ -96,8 +100,9 @@ export default class App {
                 });
 
                 setTimeout(()=>{
+			this.buzzing = false;
                         actor.destroy();
-                }, 6*1000);
+                }, 4.7*1000);
         }
 
         private createMouth(user: User){
@@ -105,9 +110,9 @@ export default class App {
                 const mouth = Actor.Create(this.context, {
                         actor: {
                                 appearance: {
-                                        meshId: this.assets.createBoxMesh('box', 0.08, 0.08, 0.08).id,
+                                        meshId: this.assets.createBoxMesh('box', 0.07, 0.07, 0.07).id,
                                         materialId: this.assets.createMaterial('invisible', {
-                                                color: Color4.FromColor3(Color3.Red(), 0.1),
+                                                color: Color4.FromColor3(Color3.Red(), 0),
                                                 alphaMode: AlphaMode.Blend
                                         }).id
                                 },
@@ -126,8 +131,7 @@ export default class App {
                                 },
                                 collider: {
                                         geometry: { shape: ColliderType.Box},
-                                        layer: CollisionLayer.Hologram,
-                                        isTrigger: true
+                                        layer: CollisionLayer.Hologram
                                 }
 
                         }
