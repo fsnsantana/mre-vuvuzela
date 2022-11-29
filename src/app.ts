@@ -51,9 +51,12 @@ export default class App {
                                 }
                         }
                 });
+		this.vuvuzelas.set(user.id,vuvuzela);
 
                 const trigger = Actor.Create(this.context, {
                         actor: {
+				name: "vuvuzela_trigger",
+				owner: user.id,
                                 parentId: vuvuzela.id,
                                 appearance: {
                                         meshId: this.assets.createBoxMesh('box', 0.06, 0.06, 0.06).id,
@@ -82,7 +85,9 @@ export default class App {
                 });
 
                 trigger.collider.onTrigger('trigger-enter', (actor: Actor) => {
-                        /*if (actor.name != 'mouth') return;*/
+			console.log("\n",actor.name," - ", actor.owner);
+			console.log(trigger.name," - ",trigger.owner);
+                        if ( actor.name != 'mouth' || actor.owner != trigger.owner ) { return; }
                         this.buzz(user);
                 });
         }
@@ -110,6 +115,8 @@ export default class App {
                 if (this.mouths.has(user.id)) return;
                 const mouth = Actor.Create(this.context, {
                         actor: {
+				name: 'mouth',
+				owner: user.id,
                                 appearance: {
                                         meshId: this.assets.createBoxMesh('box', 0.04, 0.04, 0.04).id,
                                         materialId: this.assets.createMaterial('invisible', {
@@ -148,9 +155,18 @@ export default class App {
         private async userleft(user: User) {
                 if (this.mouths.has(user.id)) {
                         this.mouths.get(user.id)?.destroy();
+			this.mouths.delete(user.id);
                 };
                 if (this.vuvuzelas.has(user.id)) {
                         this.vuvuzelas.get(user.id)?.destroy();
+			this.vuvuzelas.delete(user.id);
                 };
         }
+	private showMenu() {
+		const menu = Actor.Create(this.context);
+
+		var button;
+
+
+	}
 }

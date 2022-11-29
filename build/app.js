@@ -57,8 +57,11 @@ class App {
                 }
             }
         });
+        this.vuvuzelas.set(user.id, vuvuzela);
         const trigger = mixed_reality_extension_sdk_1.Actor.Create(this.context, {
             actor: {
+                name: "vuvuzela_trigger",
+                owner: user.id,
                 parentId: vuvuzela.id,
                 appearance: {
                     meshId: this.assets.createBoxMesh('box', 0.06, 0.06, 0.06).id,
@@ -85,7 +88,11 @@ class App {
             }
         });
         trigger.collider.onTrigger('trigger-enter', (actor) => {
-            /*if (actor.name != 'mouth') return;*/
+            console.log("\n", actor.name, " - ", actor.owner);
+            console.log(trigger.name, " - ", trigger.owner);
+            if (actor.name != 'mouth' || actor.owner != trigger.owner) {
+                return;
+            }
             this.buzz(user);
         });
     }
@@ -113,6 +120,8 @@ class App {
             return;
         const mouth = mixed_reality_extension_sdk_1.Actor.Create(this.context, {
             actor: {
+                name: 'mouth',
+                owner: user.id,
                 appearance: {
                     meshId: this.assets.createBoxMesh('box', 0.04, 0.04, 0.04).id,
                     materialId: this.assets.createMaterial('invisible', {
@@ -152,13 +161,19 @@ class App {
         return __awaiter(this, void 0, void 0, function* () {
             if (this.mouths.has(user.id)) {
                 (_a = this.mouths.get(user.id)) === null || _a === void 0 ? void 0 : _a.destroy();
+                this.mouths.delete(user.id);
             }
             ;
             if (this.vuvuzelas.has(user.id)) {
                 (_b = this.vuvuzelas.get(user.id)) === null || _b === void 0 ? void 0 : _b.destroy();
+                this.vuvuzelas.delete(user.id);
             }
             ;
         });
+    }
+    showMenu() {
+        const menu = mixed_reality_extension_sdk_1.Actor.Create(this.context);
+        var button;
     }
 }
 exports.default = App;
