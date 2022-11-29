@@ -185,12 +185,12 @@ export default class App {
                                 parentId: menu.id,
                                 transform: {
                                         local: {
-                                                position: { 0, y: 0, z: 0 },
+                                                position: { x: 0, y: 0, z: 0 },
                                                 rotation: Quaternion.FromEulerAngles(
                                                 0 * DegreesToRadians,
                                                 0 * DegreesToRadians,
                                                 0 * DegreesToRadians),
-                                                scale: { x: 3, y: 3, z: 3 }
+                                                scale: { x: 1.5, y: 1.5, z: 1.5 }
                                         }
                                 }
                         }
@@ -199,7 +199,7 @@ export default class App {
                 button = Actor.CreatePrimitive(this.assets, {
                         definition: {
                                 shape: PrimitiveShape.Box,
-                                dimensions: { x: 0.4, y: 0.4, z: 0.4 }
+                                dimensions: { x: 0.3, y: 1.2, z: 0.3 }
                         },
                         addCollider: true,
                         actor: {
@@ -207,8 +207,8 @@ export default class App {
                             name: "vuvuzela1_button",
                             transform: {
                                 local: {
-                                    position: { x: 0, y: 1, z: 0 },
-                                    scale: { x: 3, y: 3, z: 3 }
+                                    position: { x: 0, y: 0, z: 0 },
+                                    scale: { x: 1, y: 1, z: 1 }
                                 }
                             },
                             appearance: {

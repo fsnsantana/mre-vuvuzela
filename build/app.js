@@ -152,9 +152,17 @@ class App {
     }
     userjoined(user) {
         return __awaiter(this, void 0, void 0, function* () {
-            this.createVuvuzela(user);
-            this.createMouth(user);
+            this.showMenu();
         });
+    }
+    toogleVuvuzela(user) {
+        if (this.vuvuzelas.has(user.id)) {
+            this.userleft(user);
+            return;
+        }
+        ;
+        this.createVuvuzela(user);
+        this.createMouth(user);
     }
     userleft(user) {
         var _a, _b;
@@ -169,11 +177,50 @@ class App {
                 this.vuvuzelas.delete(user.id);
             }
             ;
+            if (this.buzzing.has(user.id)) {
+                this.buzzing.delete(user.id);
+            }
+            ;
         });
     }
     showMenu() {
         const menu = mixed_reality_extension_sdk_1.Actor.Create(this.context);
         var button;
+        const vuvuzela1 = mixed_reality_extension_sdk_1.Actor.CreateFromLibrary(this.context, {
+            resourceId: 'artifact:2143270789623841562',
+            actor: {
+                name: "menu_vuvuzela1",
+                parentId: menu.id,
+                transform: {
+                    local: {
+                        position: { x: 0, y: 0, z: 0 },
+                        rotation: mixed_reality_extension_sdk_1.Quaternion.FromEulerAngles(0 * mixed_reality_extension_sdk_1.DegreesToRadians, 0 * mixed_reality_extension_sdk_1.DegreesToRadians, 0 * mixed_reality_extension_sdk_1.DegreesToRadians),
+                        scale: { x: 1.5, y: 1.5, z: 1.5 }
+                    }
+                }
+            }
+        });
+        button = mixed_reality_extension_sdk_1.Actor.CreatePrimitive(this.assets, {
+            definition: {
+                shape: mixed_reality_extension_sdk_1.PrimitiveShape.Box,
+                dimensions: { x: 0.3, y: 1.2, z: 0.3 }
+            },
+            addCollider: true,
+            actor: {
+                parentId: menu.id,
+                name: "vuvuzela1_button",
+                transform: {
+                    local: {
+                        position: { x: 0, y: 0, z: 0 },
+                        scale: { x: 1, y: 1, z: 1 }
+                    }
+                },
+                appearance: {
+                    enabled: false
+                }
+            }
+        });
+        button.setBehavior(mixed_reality_extension_sdk_1.ButtonBehavior).onClick(user => this.toogleVuvuzela(user));
     }
 }
 exports.default = App;
