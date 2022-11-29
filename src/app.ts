@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { Context, ParameterSet, User, AssetContainer, Guid, Actor, Quaternion, DegreesToRadians, Color4, Color3, AlphaMode, ColliderType, CollisionLayer } from "@microsoft/mixed-reality-extension-sdk";
+import { Context, ParameterSet, User, AssetContainer, Guid, Actor, Quaternion, DegreesToRadians, Color4, Color3, AlphaMode, ColliderType, CollisionLayer, ButtonBehavior } from "@microsoft/mixed-reality-extension-sdk";
 
 /**
  * The main class of this app. All the logic goes here.
@@ -148,6 +148,14 @@ export default class App {
         }
 
         private async userjoined(user: User) {
+                this.showMenu();
+        }
+
+        private toogleVuvuzela(user: User){
+                if (this.vuvuzelas.has(user.id)) {
+                        this.userleft(user);
+                        return;
+                };
                 this.createVuvuzela(user);
                 this.createMouth(user);
         }
@@ -161,12 +169,34 @@ export default class App {
                         this.vuvuzelas.get(user.id)?.destroy();
 			this.vuvuzelas.delete(user.id);
                 };
+                if (this.buzzing.has(user.id)) {
+			this.buzzing.delete(user.id);
+                };
         }
 	private showMenu() {
 		const menu = Actor.Create(this.context);
 
 		var button;
 
+                const vuvuzela1 = Actor.CreateFromLibrary(this.context, {
+                        resourceId: 'artifact:2143270789623841562',
+                        addCollider: true,
+                        actor: {
+                                name: "menu_vuvuzela1",
+                                parentId: menu.id,
+                                transform: {
+                                        local: {
+                                                position: { 0, y: 0, z: 0 },
+                                                rotation: Quaternion.FromEulerAngles(
+                                                0 * DegreesToRadians,
+                                                0 * DegreesToRadians,
+                                                0 * DegreesToRadians),
+                                                scale: { x: 3, y: 3, z: 3 }
+                                        }
+                                }
+                        }
+                });
 
+                vuvuzela1.setBehavior(ButtonBehavior).onClick(user => this.toogleVuvuzela(user));
 	}
 }
