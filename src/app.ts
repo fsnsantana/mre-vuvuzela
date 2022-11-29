@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { Context, ParameterSet, User, AssetContainer, Guid, Actor, Quaternion, DegreesToRadians, Color4, Color3, AlphaMode, ColliderType, CollisionLayer, ButtonBehavior } from "@microsoft/mixed-reality-extension-sdk";
+import { Context, ParameterSet, User, AssetContainer, Guid, Actor, Quaternion, DegreesToRadians, Color4, Color3, AlphaMode, ColliderType, CollisionLayer, ButtonBehavior, PrimitiveShape } from "@microsoft/mixed-reality-extension-sdk";
 
 /**
  * The main class of this app. All the logic goes here.
@@ -180,7 +180,6 @@ export default class App {
 
                 const vuvuzela1 = Actor.CreateFromLibrary(this.context, {
                         resourceId: 'artifact:2143270789623841562',
-                        addCollider: true,
                         actor: {
                                 name: "menu_vuvuzela1",
                                 parentId: menu.id,
@@ -197,6 +196,27 @@ export default class App {
                         }
                 });
 
-                vuvuzela1.setBehavior(ButtonBehavior).onClick(user => this.toogleVuvuzela(user));
+                button = Actor.CreatePrimitive(this.assets, {
+                        definition: {
+                                shape: PrimitiveShape.Box,
+                                dimensions: { x: 0.4, y: 0.4, z: 0.4 }
+                        },
+                        addCollider: true,
+                        actor: {
+                            parentId: menu.id,
+                            name: "vuvuzela1_button",
+                            transform: {
+                                local: {
+                                    position: { x: 0, y: 1, z: 0 },
+                                    scale: { x: 3, y: 3, z: 3 }
+                                }
+                            },
+                            appearance: {
+                                enabled: false
+                            }
+                        }
+                    });
+
+                button.setBehavior(ButtonBehavior).onClick(user => this.toogleVuvuzela(user));
 	}
 }
