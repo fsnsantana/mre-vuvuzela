@@ -26,6 +26,7 @@ class App {
         this.assets = new mixed_reality_extension_sdk_1.AssetContainer(this.context);
         this.mouths = new Map();
         this.vuvuzelas = new Map();
+        this.choosedVuvuzela = new Map();
         this.buzzing = new Map();
         this.context.onStarted(() => this.started());
         this.context.onUserJoined((u) => this.userjoined(u));
@@ -38,9 +39,20 @@ class App {
         return __awaiter(this, void 0, void 0, function* () {
         });
     }
-    createVuvuzela(user) {
+    createChoosedVuvuzela(user, choosed) {
+        if (choosed == "vuvuzela1") {
+            this.createVuvuzela1(user);
+        }
+        ;
+        if (choosed == "vuvuzela2") {
+            this.createVuvuzela2(user);
+        }
+        ;
+    }
+    createVuvuzela1(user) {
         if (this.vuvuzelas.has(user.id))
             return;
+        this.choosedVuvuzela.set(user.id, "vuvuzela1");
         const vuvuzela = mixed_reality_extension_sdk_1.Actor.CreateFromLibrary(this.context, {
             resourceId: 'artifact:2143270789623841562',
             actor: {
@@ -60,11 +72,70 @@ class App {
         this.vuvuzelas.set(user.id, vuvuzela);
         const trigger = mixed_reality_extension_sdk_1.Actor.Create(this.context, {
             actor: {
-                name: "vuvuzela_trigger",
+                name: "vuvuzela1",
                 owner: user.id,
                 parentId: vuvuzela.id,
                 appearance: {
                     meshId: this.assets.createBoxMesh('box', 0.06, 0.06, 0.06).id,
+                    materialId: this.assets.createMaterial('invisible', {
+                        color: mixed_reality_extension_sdk_1.Color4.FromColor3(mixed_reality_extension_sdk_1.Color3.Red(), 0),
+                        alphaMode: mixed_reality_extension_sdk_1.AlphaMode.Blend
+                    }).id
+                },
+                transform: {
+                    local: {
+                        position: { x: 0, y: 0.6, z: 0 }
+                    }
+                },
+                collider: {
+                    geometry: { shape: mixed_reality_extension_sdk_1.ColliderType.Box },
+                    layer: mixed_reality_extension_sdk_1.CollisionLayer.Hologram,
+                    isTrigger: true
+                },
+                rigidBody: {
+                    enabled: true,
+                    useGravity: false,
+                    isKinematic: true
+                }
+            }
+        });
+        trigger.collider.onTrigger('trigger-enter', (actor) => {
+            console.log("\n", actor.name, " - ", actor.owner);
+            console.log(trigger.name, " - ", trigger.owner);
+            if (actor.name != 'mouth' || actor.owner != trigger.owner) {
+                return;
+            }
+            this.buzz(user);
+        });
+    }
+    createVuvuzela2(user) {
+        if (this.vuvuzelas.has(user.id))
+            return;
+        this.choosedVuvuzela.set(user.id, "vuvuzela2");
+        const vuvuzela = mixed_reality_extension_sdk_1.Actor.CreateFromLibrary(this.context, {
+            resourceId: 'artifact:2143270789623841562',
+            actor: {
+                transform: {
+                    local: {
+                        position: { x: -0.1, y: 0, z: 0.08 },
+                        rotation: mixed_reality_extension_sdk_1.Quaternion.FromEulerAngles(-90 * mixed_reality_extension_sdk_1.DegreesToRadians, 0, -90 * mixed_reality_extension_sdk_1.DegreesToRadians),
+                        scale: { x: 0.35, y: 0.35, z: 0.35 }
+                    }
+                },
+                attachment: {
+                    userId: user.id,
+                    attachPoint: 'left-hand'
+                }
+            }
+        });
+        this.vuvuzelas.set(user.id, vuvuzela);
+        const trigger = mixed_reality_extension_sdk_1.Actor.Create(this.context, {
+            actor: {
+                name: "vuvuzela2",
+                owner: user.id,
+                parentId: vuvuzela.id,
+                appearance: {
+                    meshId: this.assets.createBoxMesh('box', 0.05, 0.05, 0.05).id,
                     materialId: this.assets.createMaterial('invisible', {
                         color: mixed_reality_extension_sdk_1.Color4.FromColor3(mixed_reality_extension_sdk_1.Color3.Red(), 0),
                         alphaMode: mixed_reality_extension_sdk_1.AlphaMode.Blend
@@ -101,19 +172,38 @@ class App {
             return;
         }
         this.buzzing.set(user.id, true);
-        const actor = mixed_reality_extension_sdk_1.Actor.CreateFromLibrary(this.context, {
-            resourceId: 'artifact:2144568407004021116',
-            actor: {
-                attachment: {
-                    userId: user.id,
-                    attachPoint: 'left-hand'
+        if (this.choosedVuvuzela.get(user.id) == "vuvuzela1") {
+            const actor = mixed_reality_extension_sdk_1.Actor.CreateFromLibrary(this.context, {
+                resourceId: 'artifact:2144568407004021116',
+                actor: {
+                    attachment: {
+                        userId: user.id,
+                        attachPoint: 'left-hand'
+                    }
                 }
-            }
-        });
-        setTimeout(() => {
-            this.buzzing.set(user.id, false);
-            actor.destroy();
-        }, 4.7 * 1000);
+            });
+            setTimeout(() => {
+                this.buzzing.set(user.id, false);
+                actor.destroy();
+            }, 4.7 * 1000);
+        }
+        ;
+        if (this.choosedVuvuzela.get(user.id) == "vuvuzela2") {
+            const actor = mixed_reality_extension_sdk_1.Actor.CreateFromLibrary(this.context, {
+                resourceId: 'artifact:2145512382976230004',
+                actor: {
+                    attachment: {
+                        userId: user.id,
+                        attachPoint: 'left-hand'
+                    }
+                }
+            });
+            setTimeout(() => {
+                this.buzzing.set(user.id, false);
+                actor.destroy();
+            }, 5.2 * 1000);
+        }
+        ;
     }
     createMouth(user) {
         if (this.mouths.has(user.id))
@@ -155,13 +245,16 @@ class App {
             this.showMenu();
         });
     }
-    toogleVuvuzela(user) {
+    toogleVuvuzela(user, choosed) {
         if (this.vuvuzelas.has(user.id)) {
             this.userleft(user);
-            return;
+            if (choosed == this.choosedVuvuzela.get(user.id)) {
+                this.choosedVuvuzela.delete(user.id);
+                return;
+            }
         }
         ;
-        this.createVuvuzela(user);
+        this.createChoosedVuvuzela(user, choosed);
         this.createMouth(user);
     }
     userleft(user) {
@@ -185,7 +278,7 @@ class App {
     }
     showMenu() {
         const menu = mixed_reality_extension_sdk_1.Actor.Create(this.context);
-        var button;
+        var button1, button2;
         const vuvuzela1 = mixed_reality_extension_sdk_1.Actor.CreateFromLibrary(this.context, {
             resourceId: 'artifact:2143270789623841562',
             actor: {
@@ -200,7 +293,7 @@ class App {
                 }
             }
         });
-        button = mixed_reality_extension_sdk_1.Actor.CreatePrimitive(this.assets, {
+        button1 = mixed_reality_extension_sdk_1.Actor.CreatePrimitive(this.assets, {
             definition: {
                 shape: mixed_reality_extension_sdk_1.PrimitiveShape.Box,
                 dimensions: { x: 0.3, y: 1.2, z: 0.3 }
@@ -208,7 +301,7 @@ class App {
             addCollider: true,
             actor: {
                 parentId: menu.id,
-                name: "vuvuzela1_button",
+                name: "vuvuzela1",
                 transform: {
                     local: {
                         position: { x: 0, y: 0, z: 0 },
@@ -220,7 +313,42 @@ class App {
                 }
             }
         });
-        button.setBehavior(mixed_reality_extension_sdk_1.ButtonBehavior).onClick(user => this.toogleVuvuzela(user));
+        const vuvuzela2 = mixed_reality_extension_sdk_1.Actor.CreateFromLibrary(this.context, {
+            resourceId: 'artifact:2143270789623841562',
+            actor: {
+                name: "menu_vuvuzela2",
+                parentId: menu.id,
+                transform: {
+                    local: {
+                        position: { x: 1, y: 0, z: 0 },
+                        rotation: mixed_reality_extension_sdk_1.Quaternion.FromEulerAngles(0 * mixed_reality_extension_sdk_1.DegreesToRadians, 0 * mixed_reality_extension_sdk_1.DegreesToRadians, 0 * mixed_reality_extension_sdk_1.DegreesToRadians),
+                        scale: { x: 0.75, y: 0.75, z: 0.75 }
+                    }
+                }
+            }
+        });
+        button2 = mixed_reality_extension_sdk_1.Actor.CreatePrimitive(this.assets, {
+            definition: {
+                shape: mixed_reality_extension_sdk_1.PrimitiveShape.Box,
+                dimensions: { x: 0.15, y: 0.6, z: 0.15 }
+            },
+            addCollider: true,
+            actor: {
+                parentId: menu.id,
+                name: "vuvuzela2",
+                transform: {
+                    local: {
+                        position: { x: 1, y: 0, z: 0 },
+                        scale: { x: 1, y: 1, z: 1 }
+                    }
+                },
+                appearance: {
+                    enabled: false
+                }
+            }
+        });
+        button1.setBehavior(mixed_reality_extension_sdk_1.ButtonBehavior).onClick(user => this.toogleVuvuzela(user, "vuvuzela1"));
+        button2.setBehavior(mixed_reality_extension_sdk_1.ButtonBehavior).onClick(user => this.toogleVuvuzela(user, "vuvuzela2"));
     }
 }
 exports.default = App;

@@ -132,9 +132,9 @@ export default class App {
 				owner: user.id,
                                 parentId: vuvuzela.id,
                                 appearance: {
-                                        meshId: this.assets.createBoxMesh('box', 0.03, 0.03, 0.03).id,
+                                        meshId: this.assets.createBoxMesh('box', 0.05, 0.05, 0.05).id,
                                         materialId: this.assets.createMaterial('invisible', {
-                                                color: Color4.FromColor3(Color3.Red(), 0.3),
+                                                color: Color4.FromColor3(Color3.Red(), 0),
                                                 alphaMode: AlphaMode.Blend
                                         }).id
                                 },
@@ -179,6 +179,10 @@ export default class App {
                                         }
                                 }
                         });
+			setTimeout(()=>{
+				this.buzzing.set(user.id,false);
+				actor.destroy();
+			}, 4.7*1000);
                 };
                 if ( this.choosedVuvuzela.get(user.id) == "vuvuzela2" ) {
                         const actor = Actor.CreateFromLibrary(this.context, {
@@ -190,12 +194,11 @@ export default class App {
                                         }
                                 }
                         });
-                };
-
-                setTimeout(()=>{
-			this.buzzing.set(user.id,false);
-                        actor.destroy();
-                }, 4.7*1000);
+                	setTimeout(()=>{
+				this.buzzing.set(user.id,false);
+                        	actor.destroy();
+                	}, 5.2*1000);
+		};
         }
 
         private createMouth(user: User){
@@ -313,7 +316,7 @@ export default class App {
                                 parentId: menu.id,
                                 transform: {
                                         local: {
-                                                position: { x: 0, y: 1, z: 0 },
+                                                position: { x: 1, y: 0, z: 0 },
                                                 rotation: Quaternion.FromEulerAngles(
                                                 0 * DegreesToRadians,
                                                 0 * DegreesToRadians,
@@ -335,7 +338,7 @@ export default class App {
                             name: "vuvuzela2",
                             transform: {
                                 local: {
-                                    position: { x: 0, y: 1, z: 0 },
+                                    position: { x: 1, y: 0, z: 0 },
                                     scale: { x: 1, y: 1, z: 1 }
                                 }
                             },
